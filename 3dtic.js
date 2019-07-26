@@ -12,6 +12,9 @@ function preload() {
 
 function setup() {
   canvas = createCanvas(windowWidth, windowHeight, WEBGL);
+
+  addScreenPositionFunction();
+
   backgroundColor = color(12, 12, 56);
 
   cam = createCamera();
@@ -41,6 +44,7 @@ function draw() {
   );
   cam.lookAt(0, 0, 0);
 
+  board.updateClosest(createVector(mouseX - width / 2, mouseY - height / 2));
   board.draw();
 }
 
@@ -51,8 +55,8 @@ class GameBoard {
     this.height = height;
     this.depth = depth;
     this.scale = scale;
+    this.closest = -1; // index or negative 1
     this.clear();
-    console.log(this);
   }
 
   clear() {
@@ -62,19 +66,50 @@ class GameBoard {
     }
   }
 
-  draw() {
+  updateClosest(mouseLocation) {
+    let recordDistance = Number.MAX_VALUE;
     for (let i = 0; i < this.width; i++) {
       for (let j = 0; j < this.height; j++) {
         for (let k = 0; k < this.depth; k++) {
+          const position = this.getPosition(i, j, k);
+          const screenLocation = screenPosition(position.x, position.y, position.z);
+          const distance = dist(mouseLocation.x, mouseLocation.y, screenLocation.x, screenLocation.y);
+          if (recordDistance > distance) {
+            recordDistance = distance;
+            this.closest = this.index(i, j, k);
+          }
+        }
+      }
+    }
+    if (recordDistance > this.scale / 2) { 
+      this.closest = -1;
+    }
+  }
+
+  getPosition(i, j, k) {
+    return createVector(
+      ((i + .5) - (this.width / 2)) * this.scale,
+      ((j + .5) - (this.height / 2)) * this.scale * 3,
+      ((k + .5) - (this.depth / 2)) * this.scale
+    )
+  }
+
+  draw(mouseLocation) {
+    for (let i = 0; i < this.width; i++) {
+      for (let j = 0; j < this.height; j++) {
+        for (let k = 0; k < this.depth; k++) {
+          const position = this.getPosition(i, j, k);
+          const index = this.index(i, j, k);
           push();
-          let x = ((i + .5) - (this.width / 2)) * this.scale;
-          let y = ((j + .5) - (this.height / 2)) * this.scale * 3;
-          let z = ((k + .5) - (this.depth / 2)) * this.scale;
-          translate(x, y, z);
+          if (index == this.closest) {
+            stroke(255, 0, 0);
+          } else {
+            stroke(255);
+          }
+          translate(position.x, position.y, position.z);
           rotateX(PI / 2);
-          //box(this.scale, 0, this.scale);
           square(0, 0, this.scale);
-          this.drawIcon(this.state[this.index(i, j, k)]);
+          this.drawIcon(this.state[index]);
           pop();
         }
       }
