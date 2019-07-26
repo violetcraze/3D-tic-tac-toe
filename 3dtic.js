@@ -158,65 +158,6 @@ class GameBoard {
   }
 
   checkForWinner() {
-    
-    console.log(this);
-    
-    // // check x
-    // for (let j = 0; j < this.height; j++) {
-    //   for (let k = 0; k < this.depth; k++) {
-    //     let equal = true;
-    //     let checkState = this.state[this.index(0, j, k)];
-    //     if (checkState === 0) {
-    //       equal = false;
-    //     }
-    //     for (let i = 1; i < this.width; i++) {
-    //       if (checkState !== this.state[this.index(i, j, k)]) {
-    //         equal = false;
-    //       }
-    //     }
-    //     if (equal) {
-    //       console.log("Winner");
-    //     }
-    //   }
-    // }
-
-    // // check y
-    // for (let i = 0; i < this.width; i++) {
-    //   for (let k = 0; k < this.depth; k++) {
-    //     let equal = true;
-    //     let checkState = this.state[this.index(i, 0, k)];
-    //     if (checkState === 0) {
-    //       equal = false;
-    //     }
-    //     for (let j = 1; j < this.height; j++) {
-    //       if (checkState !== this.state[this.index(i, j, k)]) {
-    //         equal = false;
-    //       }
-    //     }
-    //     if (equal) {
-    //       console.log("Winner");
-    //     }
-    //   }
-    // }
-
-    // // check z
-    // for (let i = 0; i < this.width; i++) {
-    //   for (let j = 0; j < this.height; j++) {
-    //     let equal = true;
-    //     let checkState = this.state[this.index(i, j, 0)];
-    //     if (checkState === 0) {
-    //       equal = false;
-    //     }
-    //     for (let k = 1; k < this.height; k++) {
-    //       if (checkState !== this.state[this.index(i, j, k)]) {
-    //         equal = false;
-    //       }
-    //     }
-    //     if (equal) {
-    //       console.log("Winner");
-    //     }
-    //   }
-    // }
 
     for (let i = 0; i < 3; i++) {
       this.checkDimension(i);
