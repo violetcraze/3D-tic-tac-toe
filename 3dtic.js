@@ -18,9 +18,10 @@ function setup() {
   cam.ortho(-width / 2, width / 2, height / 2, -height / 2, -500, 1000);
 
   rectMode(CENTER);
+  smooth();
   noFill();
   stroke(255);
-  strokeWeight(3);
+  strokeWeight(2);
 
   board = new GameBoard(4, 4, 4, 50);
 }
@@ -57,7 +58,7 @@ class GameBoard {
   clear() {
     this.state = [];
     for (let i = 0; i < this.width * this.height * this.depth; i++) {
-      this.state.push(0);
+      this.state.push(int(random(3)));
     }
   }
 
@@ -70,11 +71,30 @@ class GameBoard {
           let y = ((j + .5) - (this.height / 2)) * this.scale * 3;
           let z = ((k + .5) - (this.depth / 2)) * this.scale;
           translate(x, y, z);
-          box(this.scale, 0, this.scale);
+          rotateX(PI / 2);
+          //box(this.scale, 0, this.scale);
+          square(0, 0, this.scale);
+          this.drawIcon(this.state[this.index(i, j, k)]);
           pop();
         }
       }
     }
+  }
+
+  drawIcon(state) {
+    switch(state) {
+      case 1:
+        ellipse(0, 0, this.scale * 5 / 11);
+        break;
+      case 2:
+        line(-this.scale / 4, -this.scale / 4, this.scale / 4, this.scale / 4);
+        line(-this.scale / 4, this.scale / 4, this.scale / 4, -this.scale / 4);
+        break;
+    }
+  }
+
+  index(x, y, z) {
+    return x + (y * this.width) + (z * this.width * this.height);
   }
 
 }
