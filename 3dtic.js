@@ -19,7 +19,7 @@ function setup() {
   boardGraphics = createGraphics(width, height, WEBGL);
   console.log(boardGraphics);
 
-  addScreenPositionFunction();
+  addScreenPositionFunction(boardGraphics);
 
   backgroundColor = color(12, 12, 56);
 
@@ -56,7 +56,7 @@ function draw() {
 
   boardGraphics.setCamera(cam);
 
-  board.updateClosest(createVector(mouseX - width / 2, mouseY - height / 2));
+  board.updateClosest(createVector(mouseX - width / 2, mouseY - height / 2), boardGraphics);
   board.draw(currentPlayer, boardGraphics);
   image(boardGraphics, 0, 0);
 }
@@ -102,13 +102,13 @@ class GameBoard {
     this.winner = null;
   }
 
-  updateClosest(mouseLocation) {
+  updateClosest(mouseLocation, pg) {
     let recordDistance = Number.MAX_VALUE;
     for (let i = 0; i < this.width; i++) {
       for (let j = 0; j < this.height; j++) {
         for (let k = 0; k < this.depth; k++) {
           const position = this.getPosition(i, j, k);
-          const screenLocation = screenPosition(position.x, position.y, position.z);
+          const screenLocation = pg.screenPosition(position.x, position.y, position.z);
           const distance = dist(mouseLocation.x, mouseLocation.y, screenLocation.x, screenLocation.y);
           if (recordDistance > distance) {
             recordDistance = distance;
