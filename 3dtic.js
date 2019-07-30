@@ -4,6 +4,7 @@ let canvas;
 let backgroundColor;
 
 let board;
+let boardGraphics;
 let cam;
 
 let currentPlayer;
@@ -13,7 +14,10 @@ function preload() {
 }
 
 function setup() {
-  canvas = createCanvas(windowWidth, windowHeight, WEBGL);
+  canvas = createCanvas(windowWidth, windowHeight);
+
+  boardGraphics = createGraphics(width, height, WEBGL);
+  console.log(boardGraphics);
 
   addScreenPositionFunction();
 
@@ -21,25 +25,27 @@ function setup() {
 
   currentPlayer = int(random(2)) + 1;
 
-  cam = createCamera();
+  cam = boardGraphics.createCamera();
   cam.ortho(-width / 2, width / 2, height / 2, -height / 2, -500, 1000);
 
-  rectMode(CENTER);
-  smooth();
-  noFill();
-  stroke(255);
-  strokeWeight(2);
+  boardGraphics.rectMode(CENTER);
+  //boardGraphics.smooth();
+  boardGraphics.noFill();
+  boardGraphics.stroke(255);
+  boardGraphics.strokeWeight(2);
 
   board = new GameBoard(4, 4, 4, 50);
 }
 
 function windowResized() {
   canvas.resize(windowWidth, windowHeight);
-  cam.ortho(-width / 2, width / 2, height / 2, -height / 2, -500, 1000);
+  // cam.ortho(-width / 2, width / 2, height / 2, -height / 2, -500, 1000);
 }
 
 function draw() {
-  background(backgroundColor);
+  boardGraphics.clear();
+  drawGradientBackground();
+  //background(backgroundColor);
 
   cam.setPosition(
     cos(frameCount * 0.001),
@@ -48,8 +54,23 @@ function draw() {
   );
   cam.lookAt(0, 0, 0);
 
+  boardGraphics.setCamera(cam);
+
   board.updateClosest(createVector(mouseX - width / 2, mouseY - height / 2));
-  board.draw(currentPlayer);
+  board.draw(currentPlayer, boardGraphics);
+  image(boardGraphics, 0, 0);
+}
+
+function drawGradientBackground() {
+  push();
+  translate(0, 0, 0);
+  let c1 = color(0, 255, 0);
+  let c2 = color(0, 0, 255);
+  for (let i = 0; i < height; i++) {
+    stroke(lerpColor(c1, c2, i/float(height)));
+    line(0, i, width, i);
+  }
+  pop();
 }
 
 function mouseReleased() {
@@ -109,50 +130,59 @@ class GameBoard {
     )
   }
 
-  draw(currentPlayer) {
+  draw(currentPlayer, pg) {
+    let noGraphicsPassed = typeof pg === 'undefined';
+    if (noGraphicsPassed) {
+      pg = createGraphics(width, height, WEBGL);
+    }
     for (let i = 0; i < this.width; i++) {
       for (let j = 0; j < this.height; j++) {
         for (let k = 0; k < this.depth; k++) {
           const position = this.getPosition(i, j, k);
           const index = this.index(i, j, k);
-          push();
+          pg.push();
           
-          stroke(255);
-          translate(position.x, position.y, position.z);
-          rotateX(PI / 2);
-          square(0, 0, this.scale);
+          pg.stroke(255);
+          pg.translate(position.x, position.y, position.z);
+          pg.rotateX(PI / 2);
+          pg.square(0, 0, this.scale);
           if (index === this.closest && this.state[index] === 0) {
-            stroke(255, 0, 0);
-            this.drawIcon(currentPlayer);
+            pg.stroke(255, 0, 0);
+            this.drawIcon(currentPlayer, pg);
           } else {
-            this.drawIcon(this.state[index]);
+            this.drawIcon(this.state[index], pg);
           }
-          pop();
+          pg.pop();
         }
       }
     }
 
     if (this.winner !== null) {
-      this.drawWinner();
+      this.drawWinner(pg);
+    }
+
+    if (noGraphicsPassed) {
+      image(pg, 0, 0);
+      pg.remove();
     }
   }
 
-  drawIcon(state) {
+  drawIcon(state, pg) {
     switch(state) {
       case 1:
-        ellipse(0, 0, this.scale * 5 / 11);
+        pg.ellipse(0, 0, this.scale * 5 / 11);
         break;
       case 2:
-        line(-this.scale / 4, -this.scale / 4, this.scale / 4, this.scale / 4);
-        line(-this.scale / 4, this.scale / 4, this.scale / 4, -this.scale / 4);
+        pg.line(-this.scale / 4, -this.scale / 4, this.scale / 4, this.scale / 4);
+        pg.line(-this.scale / 4, this.scale / 4, this.scale / 4, -this.scale / 4);
         break;
     }
   }
 
-  drawWinner() {
+  drawWinner(pg) {
     const start = this.getPosition(this.winner[0], this.winner[1], this.winner[2]);
     const end = this.getPosition(this.winner[3], this.winner[4], this.winner[5]);
-    line(start.x, start.y, start.z, end.x, end.y, end.z);
+    pg.line(start.x, start.y, start.z, end.x, end.y, end.z);
   }
 
   index(x, y, z) {
