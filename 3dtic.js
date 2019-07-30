@@ -78,6 +78,7 @@ class GameBoard {
     for (let i = 0; i < this.width * this.height * this.depth; i++) {
       this.state.push(0);
     }
+    this.winner = null;
   }
 
   updateClosest(mouseLocation) {
@@ -130,6 +131,10 @@ class GameBoard {
         }
       }
     }
+
+    if (this.winner !== null) {
+      this.drawWinner();
+    }
   }
 
   drawIcon(state) {
@@ -142,6 +147,12 @@ class GameBoard {
         line(-this.scale / 4, this.scale / 4, this.scale / 4, -this.scale / 4);
         break;
     }
+  }
+
+  drawWinner() {
+    const start = this.getPosition(this.winner[0], this.winner[1], this.winner[2]);
+    const end = this.getPosition(this.winner[3], this.winner[4], this.winner[5]);
+    line(start.x, start.y, start.z, end.x, end.y, end.z);
   }
 
   index(x, y, z) {
@@ -252,8 +263,17 @@ class GameBoard {
           }
         }
         if (equal) {
-          console.log("Winner");
-          return true;
+          switch(dimension) {
+            case 0:
+              this.winner = [0, i, j, bounds[2] - 1, i, j];
+              break;
+            case 1:
+              this.winner = [i, 0, j, i, bounds[2] - 1, j];
+              break;
+            case 2:
+              this.winner = [i, j, 0, i, j, bounds[2] - 1];
+              break;
+          }
         }
       }
     }
@@ -261,6 +281,12 @@ class GameBoard {
   }
 
   checkDiagonal(x1, y1, z1, x2, y2, z2) {
+
+    const diff = [];
+    diff.push(abs(x1 - x2));
+    diff.push(abs(y1 - y2));
+    diff.push(abs(z1 - z2));
+    const checkDiff = diff[0] !== 0 ? 0 : 1;
 
     let equal = true;
     let checkState = this.state[this.index(x1, y1, z1)];
@@ -302,8 +328,7 @@ class GameBoard {
     }
 
     if (equal) {
-      console.log("Winner");
-      return true;
+      this.winner = [x1, y1, z1, x2, y2, z2];
     }
 
   }
