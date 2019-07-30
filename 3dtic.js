@@ -163,6 +163,12 @@ class GameBoard {
       this.checkDimension(i);
     }
 
+    // x y diagonals
+    for (let i = 0; i < this.depth; i++) {
+      this.checkDiagonal(0, 0, i, this.width - 1, this.height - 1, i);
+      this.checkDiagonal(this.width - 1, 0, i, 0, this.height - 1, i);
+    }
+
   }
 
   /**
@@ -236,6 +242,78 @@ class GameBoard {
           return true;
         }
       }
+    }
+
+  }
+
+  checkDiagonal(x1, y1, z1, x2, y2, z2) {
+
+    // Test Block start - comment out after coding check for winner
+    const diff = [];
+    diff.push(abs(x1 - x2));
+    diff.push(abs(y1 - y2));
+    diff.push(abs(z1 - z2));
+    const checkDiff = diff[0] !== 0 ? 0 : 1;
+
+    let zeroCheck = 0;
+    let ready = true;
+    for (let i = 0; i < diff.length; i++) {
+      if (diff[i] === 0) {
+        zeroCheck++;
+      } else {
+        if (diff[i] !== diff[checkDiff]) {
+          ready = false;
+        }
+      }
+    }
+
+    if (zeroCheck > 1 || !ready) {
+      console.log("ERROR invalid input for check diagonal! The magnitude of difference between each dimension must be the same.");
+    }
+    // Test Block end
+
+    let equal = true;
+    let checkState = this.state[this.index(x1, y1, z1)];
+    if (checkState === 0) {
+      equal = false;
+    } else {
+      for (let i = 1; i <= diff[checkDiff]; i++) {
+        let x, y, z;
+  
+        if (x1 < x2) {
+          x = x1 + i;
+        } else if (x1 === x2) {
+          x = x1;
+        } else {
+          x = x1 - i;
+        }
+  
+        if (y1 < y2) {
+          y = y1 + i;
+        } else if (y1 === y2) {
+          y = y1;
+        } else {
+          y = y1 - i;
+        }
+  
+        if (z1 < z2) {
+          z = z1 + i;
+        } else if (z1 === z2) {
+          z = z1;
+        } else {
+          z = z1 - i;
+        }
+  
+        if (checkState !== this.state[this.index(x, y, z)]) {
+          equal = false;
+        }
+  
+      }
+    }
+
+    if (equal) {
+      console.log("Winner");
+      return true;
     }
 
   }
