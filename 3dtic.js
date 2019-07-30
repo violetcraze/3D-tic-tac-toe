@@ -160,39 +160,36 @@ class GameBoard {
   checkForWinner() {
 
     for (let i = 0; i < 3; i++) {
-      this.checkDimension(i);
+      this.checkStraights(i);
     }
-
     // x y diagonals
     for (let i = 0; i < this.depth; i++) {
       this.checkDiagonal(0, 0, i, this.width - 1, this.height - 1, i);
       this.checkDiagonal(this.width - 1, 0, i, 0, this.height - 1, i);
     }
-
     // x z diagonals
     for (let i = 0; i < this.depth; i++) {
       this.checkDiagonal(0, i, 0, this.width - 1, i, this.depth - 1);
       this.checkDiagonal(this.width - 1, i, 0, 0, i, this.depth - 1);
     }
-
     // y z diagonals
     for (let i = 0; i < this.depth; i++) {
       this.checkDiagonal(i, 0, 0, i, this.height - 1, this.depth - 1);
       this.checkDiagonal(i, this.height - 1, 0, i, 0, this.depth - 1);
     }
-
+    // 3 way diagonals
     this.checkDiagonal(0, 0, 0, this.width - 1, this.height - 1, this.depth - 1);
     this.checkDiagonal(this.width - 1, 0, 0, 0, this.height - 1, this.depth - 1);
     this.checkDiagonal(this.width - 1, this.height - 1, 0, 0, 0, this.depth - 1);
     this.checkDiagonal(0, this.height - 1, 0, this.width - 1, 0, this.depth - 1);
-
+    
   }
 
   /**
    * 
    * @param {Number} dimension 0 = x, 1 = y, 2 = z
    */
-  checkDimension(dimension) {
+  checkStraights(dimension) {
 
     if (dimension < 0 || dimension > 2) {
       console.log(dimension);
