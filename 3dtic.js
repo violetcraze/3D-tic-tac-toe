@@ -22,7 +22,6 @@ function setup() {
   canvas = createCanvas(windowWidth, windowHeight);
 
   boardGraphics = createGraphics(width, height, WEBGL);
-  console.log(boardGraphics);
 
   addScreenPositionFunction(boardGraphics);
 
@@ -42,8 +41,8 @@ function setup() {
 }
 
 function setupColors() {
-  playerColors.push(color(255, 217, 13));
-  playerColors.push(color(34, 149, 154));
+  playerColors.push([color(181, 181, 251), color(1, 111, 253, 0)]);
+  playerColors.push([color(224, 210, 17), color(255, 130, 124, 0)]);
   boardColor = color(251, 24, 202);
   gradientColor1 = color(73, 6, 99);
   gradientColor2 = color(10, 92, 165);
@@ -198,24 +197,37 @@ class GameBoard {
   }
 
   drawIcon(state, pg) {
-    pg.noStroke();
+    let colorIndex;
     switch(state) {
       case 1:
-        pg.fill(playerColors[0]);
+        colorIndex = 0;
         break;
       case 2:
-        pg.fill(playerColors[1]);
+        colorIndex = 1;
         break;
       default:
         return;
     }
-    pg.sphere(this.scale / 3);
+    pg.noStroke();
+    pg.fill(playerColors[colorIndex][0]);
+    pg.sphere(this.scale / 10);
+    let gradientIterations = 10;
+    for (let i = 0; i < gradientIterations; i++) {
+      let amt = i / float(gradientIterations);
+      let c = lerpColor(playerColors[colorIndex][1], playerColors[colorIndex][0], amt);
+      pg.fill(c);
+      pg.sphere(lerp(this.scale / 2, this.scale/10, amt));
+    }
   }
 
   drawWinner(pg) {
     const start = this.getPosition(this.winner[0], this.winner[1], this.winner[2]);
     const end = this.getPosition(this.winner[3], this.winner[4], this.winner[5]);
+    pg.noFill();
+    pg.stroke(boardColor);
+    pg.strokeWeight(3);
     pg.line(start.x, start.y, start.z, end.x, end.y, end.z);
+    pg.strokeWeight(1);
   }
 
   index(x, y, z) {
