@@ -1,13 +1,18 @@
 "use strict";
 
 let canvas;
-let backgroundColor;
 
 let board;
 let boardGraphics;
 let cam;
 
 let currentPlayer;
+
+// Colors
+let gradientColor1;
+let gradientColor2;
+let boardColor;
+let playerColors = [];
 
 function preload() {
 
@@ -21,20 +26,27 @@ function setup() {
 
   addScreenPositionFunction(boardGraphics);
 
-  backgroundColor = color(12, 12, 56);
-
   currentPlayer = int(random(2)) + 1;
 
   cam = boardGraphics.createCamera();
   cam.ortho(-width / 2, width / 2, height / 2, -height / 2, -500, 1000);
 
   boardGraphics.rectMode(CENTER);
-  //boardGraphics.smooth();
   boardGraphics.noFill();
   boardGraphics.stroke(255);
   boardGraphics.strokeWeight(2);
 
   board = new GameBoard(4, 4, 4, 50);
+
+  setupColors();
+}
+
+function setupColors() {
+  playerColors.push(color(255, 217, 13));
+  playerColors.push(color(34, 149, 154));
+  boardColor = color(251, 24, 202);
+  gradientColor1 = color(73, 6, 99);
+  gradientColor2 = color(10, 92, 165);
 }
 
 function windowResized() {
@@ -44,8 +56,7 @@ function windowResized() {
 
 function draw() {
   boardGraphics.clear();
-  drawGradientBackground();
-  //background(backgroundColor);
+  drawGradientBackground(gradientColor1, gradientColor2);
 
   cam.setPosition(
     cos(frameCount * 0.001),
@@ -61,11 +72,9 @@ function draw() {
   image(boardGraphics, 0, 0);
 }
 
-function drawGradientBackground() {
+function drawGradientBackground(c1, c2) {
   push();
   translate(0, 0, 0);
-  let c1 = color(0, 255, 0);
-  let c2 = color(0, 0, 255);
   for (let i = 0; i < height; i++) {
     stroke(lerpColor(c1, c2, i/float(height)));
     line(0, i, width, i);
@@ -76,7 +85,7 @@ function drawGradientBackground() {
 function mouseReleased() {
   let successful = board.makeMove(currentPlayer);
   if (successful) {
-    //currentPlayer++;
+    currentPlayer++;
     if (currentPlayer === 3) {
       currentPlayer = 1;
     }
@@ -145,7 +154,7 @@ class GameBoard {
           pg.stroke(255);
           pg.translate(position.x, position.y, position.z);
           pg.rotateX(PI / 2);
-          pg.square(0, 0, this.scale);
+          this.drawBorder(pg);
           if (index === this.closest && this.state[index] === 0) {
             pg.stroke(255, 0, 0);
             this.drawIcon(currentPlayer, pg);
@@ -167,16 +176,40 @@ class GameBoard {
     }
   }
 
+  drawBorder(pg) {
+
+    pg.noStroke();
+    pg.fill(boardColor);
+
+    let thickness = 2;
+
+    pg.translate(0, this.scale / 2, 0);
+    pg.box(this.scale, thickness, thickness);
+    pg.translate(0, -this.scale, 0);
+    pg.box(this.scale, thickness, thickness);
+    pg.translate(0, this.scale / 2, 0);
+
+    pg.translate(this.scale / 2, 0, 0);
+    pg.box(thickness, this.scale, thickness);
+    pg.translate(-this.scale, 0, 0);
+    pg.box(thickness, this.scale, thickness);
+    pg.translate(this.scale / 2, 0, 0);
+
+  }
+
   drawIcon(state, pg) {
+    pg.noStroke();
     switch(state) {
       case 1:
-        pg.ellipse(0, 0, this.scale * 5 / 11);
+        pg.fill(playerColors[0]);
         break;
       case 2:
-        pg.line(-this.scale / 4, -this.scale / 4, this.scale / 4, this.scale / 4);
-        pg.line(-this.scale / 4, this.scale / 4, this.scale / 4, -this.scale / 4);
+        pg.fill(playerColors[1]);
         break;
+      default:
+        return;
     }
+    pg.sphere(this.scale / 3);
   }
 
   drawWinner(pg) {
