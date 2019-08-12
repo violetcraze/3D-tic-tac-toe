@@ -1,103 +1,18 @@
-"use strict";
 
-let canvas;
+class TicTacToeGame {
 
-let board;
-let boardGraphics;
-let cam;
-
-let currentPlayer;
-
-// Colors
-let gradientColor1;
-let gradientColor2;
-let boardColor;
-let playerColors = [];
-
-function preload() {
-
-}
-
-function setup() {
-  canvas = createCanvas(windowWidth, windowHeight);
-
-  boardGraphics = createGraphics(width, height, WEBGL);
-
-  addScreenPositionFunction(boardGraphics);
-
-  currentPlayer = int(random(2)) + 1;
-
-  cam = boardGraphics.createCamera();
-  cam.ortho(-width / 2, width / 2, height / 2, -height / 2, -500, 1000);
-
-  boardGraphics.rectMode(CENTER);
-  boardGraphics.noFill();
-  boardGraphics.stroke(255);
-  boardGraphics.strokeWeight(2);
-
-  board = new GameBoard(4, 4, 4, 50);
-
-  setupColors();
-}
-
-function setupColors() {
-  playerColors.push([color(181, 181, 251), color(1, 111, 253, 0)]);
-  playerColors.push([color(224, 210, 17), color(255, 130, 124, 0)]);
-  boardColor = color(251, 24, 202);
-  gradientColor1 = color(73, 6, 99);
-  gradientColor2 = color(10, 92, 165);
-}
-
-function windowResized() {
-  canvas.resize(windowWidth, windowHeight);
-  // cam.ortho(-width / 2, width / 2, height / 2, -height / 2, -500, 1000);
-}
-
-function draw() {
-  boardGraphics.clear();
-  drawGradientBackground(gradientColor1, gradientColor2);
-
-  cam.setPosition(
-    cos(frameCount * 0.001),
-    map(mouseY, 0, height, PI/5, PI/7),
-    sin(frameCount * 0.001)
-  );
-  cam.lookAt(0, 0, 0);
-
-  boardGraphics.setCamera(cam);
-
-  board.updateClosest(createVector(mouseX - width / 2, mouseY - height / 2), boardGraphics);
-  board.draw(currentPlayer, boardGraphics);
-  image(boardGraphics, 0, 0);
-}
-
-function drawGradientBackground(c1, c2) {
-  push();
-  translate(0, 0, 0);
-  for (let i = 0; i < height; i++) {
-    stroke(lerpColor(c1, c2, i/float(height)));
-    line(0, i, width, i);
-  }
-  pop();
-}
-
-function mouseReleased() {
-  let successful = board.makeMove(currentPlayer);
-  if (successful) {
-    currentPlayer++;
-    if (currentPlayer === 3) {
-      currentPlayer = 1;
-    }
-  }
-}
-
-class GameBoard {
-
-  constructor(width, height, depth, scale) {
-    this.width = width;
-    this.height = height;
-    this.depth = depth;
+  constructor(size, scale) {
+    this.width = size;
+    this.height = size;
+    this.depth = size;
     this.scale = scale;
+
+    this.playerColors = [];
+    this.playerColors.push([color(181, 181, 251), color(1, 111, 253, 0)]);
+    this.playerColors.push([color(224, 210, 17), color(255, 130, 124, 0)]);
+
+    this.boardColor = color(251, 24, 202);
+
     this.closest = -1; // index or negative 1
     this.clear();
   }
@@ -149,13 +64,10 @@ class GameBoard {
           const position = this.getPosition(i, j, k);
           const index = this.index(i, j, k);
           pg.push();
-          
-          pg.stroke(255);
           pg.translate(position.x, position.y, position.z);
           pg.rotateX(PI / 2);
           this.drawBorder(pg);
           if (index === this.closest && this.state[index] === 0) {
-            pg.stroke(255, 0, 0);
             this.drawIcon(currentPlayer, pg);
           } else {
             this.drawIcon(this.state[index], pg);
@@ -178,7 +90,7 @@ class GameBoard {
   drawBorder(pg) {
 
     pg.noStroke();
-    pg.fill(boardColor);
+    pg.fill(this.boardColor);
 
     let thickness = 2;
 
@@ -197,24 +109,17 @@ class GameBoard {
   }
 
   drawIcon(state, pg) {
-    let colorIndex;
-    switch(state) {
-      case 1:
-        colorIndex = 0;
-        break;
-      case 2:
-        colorIndex = 1;
-        break;
-      default:
-        return;
+    let colorIndex = state - 1;
+    if (colorIndex !== 0 && colorIndex !== 1) {
+      return;
     }
     pg.noStroke();
-    pg.fill(playerColors[colorIndex][0]);
+    pg.fill(this.playerColors[colorIndex][0]);
     pg.sphere(this.scale / 10);
     let gradientIterations = 10;
     for (let i = 0; i < gradientIterations; i++) {
       let amt = i / float(gradientIterations);
-      let c = lerpColor(playerColors[colorIndex][1], playerColors[colorIndex][0], amt);
+      let c = lerpColor(this.playerColors[colorIndex][1], this.playerColors[colorIndex][0], amt);
       pg.fill(c);
       pg.sphere(lerp(this.scale / 2, this.scale/10, amt));
     }
@@ -224,7 +129,7 @@ class GameBoard {
     const start = this.getPosition(this.winner[0], this.winner[1], this.winner[2]);
     const end = this.getPosition(this.winner[3], this.winner[4], this.winner[5]);
     pg.noFill();
-    pg.stroke(boardColor);
+    pg.stroke(this.boardColor);
     pg.strokeWeight(3);
     pg.line(start.x, start.y, start.z, end.x, end.y, end.z);
     pg.strokeWeight(1);
