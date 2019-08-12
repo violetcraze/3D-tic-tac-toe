@@ -68,7 +68,6 @@ class TicTacToeGame {
           pg.rotateX(PI / 2);
           this.drawBorder(pg);
           if (index === this.closest && this.state[index] === 0) {
-            pg.stroke(255, 0, 0);
             this.drawIcon(currentPlayer, pg);
           } else {
             this.drawIcon(this.state[index], pg);
