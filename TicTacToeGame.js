@@ -1,10 +1,10 @@
 
 class TicTacToeGame {
 
-  constructor(width, height, depth, scale) {
-    this.width = width;
-    this.height = height;
-    this.depth = depth;
+  constructor(size, scale) {
+    this.width = size;
+    this.height = size;
+    this.depth = size;
     this.scale = scale;
 
     this.playerColors = [];
@@ -110,16 +110,9 @@ class TicTacToeGame {
   }
 
   drawIcon(state, pg) {
-    let colorIndex;
-    switch(state) {
-      case 1:
-        colorIndex = 0;
-        break;
-      case 2:
-        colorIndex = 1;
-        break;
-      default:
-        return;
+    let colorIndex = state - 1;
+    if (colorIndex !== 0 && colorIndex !== 1) {
+      return;
     }
     pg.noStroke();
     pg.fill(this.playerColors[colorIndex][0]);

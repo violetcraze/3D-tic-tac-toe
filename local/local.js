@@ -32,7 +32,7 @@ function setup() {
   gameGraphics.stroke(255);
   gameGraphics.strokeWeight(2);
 
-  game = new TicTacToeGame(4, 4, 4, 50);
+  game = new TicTacToeGame(4, 50);
 
   gradientColor1 = color(73, 6, 99);
   gradientColor2 = color(10, 92, 165);
