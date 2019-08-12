@@ -9,7 +9,7 @@ class TicTacToeGame {
 
     this.playerColors = [];
     this.playerColors.push([color(181, 181, 251), color(1, 111, 253, 0)]);
-    this.playerColors.push([color(224, 210, 17), color(255, 130, 124, 0)]);
+    this.playerColors.push([color(185, 241, 212), color(125, 219, 171, 0)]);
 
     this.boardColor = color(251, 24, 202);
 
