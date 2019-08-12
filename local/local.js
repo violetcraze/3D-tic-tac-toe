@@ -20,9 +20,18 @@ function setup() {
 
   gameGraphics = createGraphics(width, height, WEBGL);
 
-  addScreenPositionFunction(gameGraphics);
-
   currentPlayer = int(random(2)) + 1;
+
+  setupGameGraphics();
+
+  game = new TicTacToeGame(4, height / 15);
+
+  gradientColor1 = color(73, 6, 99);
+  gradientColor2 = color(10, 92, 165);
+}
+
+function setupGameGraphics() {
+  addScreenPositionFunction(gameGraphics);
 
   cam = gameGraphics.createCamera();
   cam.ortho(-width / 2, width / 2, height / 2, -height / 2, -500, 1000);
@@ -31,16 +40,14 @@ function setup() {
   gameGraphics.noFill();
   gameGraphics.stroke(255);
   gameGraphics.strokeWeight(2);
-
-  game = new TicTacToeGame(4, 50);
-
-  gradientColor1 = color(73, 6, 99);
-  gradientColor2 = color(10, 92, 165);
 }
 
 function windowResized() {
   canvas.resize(windowWidth, windowHeight);
-  // cam.ortho(-width / 2, width / 2, height / 2, -height / 2, -500, 1000);
+  
+  setupGameGraphics();
+
+  game.setScale(height / 15);
 }
 
 function draw() {

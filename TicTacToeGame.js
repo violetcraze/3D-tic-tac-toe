@@ -5,7 +5,8 @@ class TicTacToeGame {
     this.width = size;
     this.height = size;
     this.depth = size;
-    this.scale = scale;
+    this.scale = int(scale);
+    console.log(this.scale);
 
     this.playerColors = [];
     this.playerColors.push([color(181, 181, 251), color(1, 111, 253, 0)]);
@@ -15,6 +16,11 @@ class TicTacToeGame {
 
     this.closest = -1; // index or negative 1
     this.clear();
+  }
+
+  setScale(scale) {
+    this.scale = int(scale);
+    console.log(this.scale);
   }
 
   clear() {
@@ -54,10 +60,6 @@ class TicTacToeGame {
   }
 
   draw(currentPlayer, pg) {
-    let noGraphicsPassed = typeof pg === 'undefined';
-    if (noGraphicsPassed) {
-      pg = createGraphics(width, height, WEBGL);
-    }
     for (let i = 0; i < this.width; i++) {
       for (let j = 0; j < this.height; j++) {
         for (let k = 0; k < this.depth; k++) {
@@ -79,11 +81,6 @@ class TicTacToeGame {
 
     if (this.winner !== null) {
       this.drawWinner(pg);
-    }
-
-    if (noGraphicsPassed) {
-      image(pg, 0, 0);
-      pg.remove();
     }
   }
 
