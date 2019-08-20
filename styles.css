@@ -42,3 +42,9 @@ a:hover {
   right: 1rem;
   bottom: 1rem;
 }
+
+.connecting {
+  top: 1rem !important;
+  left: 1rem !important;
+  text-align: left;
+}
