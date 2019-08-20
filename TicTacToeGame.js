@@ -6,7 +6,6 @@ class TicTacToeGame {
     this.height = size;
     this.depth = size;
     this.scale = int(scale);
-    console.log(this.scale);
 
     this.playerColors = [];
     this.playerColors.push([color(181, 181, 251), color(1, 111, 253, 0)]);
@@ -20,7 +19,6 @@ class TicTacToeGame {
 
   setScale(scale) {
     this.scale = int(scale);
-    console.log(this.scale);
   }
 
   clear() {
@@ -111,10 +109,8 @@ class TicTacToeGame {
       return;
     }
     pg.noStroke();
-    pg.fill(this.playerColors[colorIndex][0]);
-    pg.sphere(this.scale / 10);
     let gradientIterations = 10;
-    for (let i = 0; i < gradientIterations; i++) {
+    for (let i = 0; i <= gradientIterations; i++) {
       let amt = i / float(gradientIterations);
       let c = lerpColor(this.playerColors[colorIndex][1], this.playerColors[colorIndex][0], amt);
       pg.fill(c);
