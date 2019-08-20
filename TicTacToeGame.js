@@ -133,6 +133,9 @@ class TicTacToeGame {
   }
 
   makeMove(currentPlayer) {
+    if (this.winner !== null) {
+      return false;
+    }
     if (this.closest !== -1 && this.state[this.closest]=== 0) {
       this.state[this.closest] = currentPlayer;
       this.checkForWinner();

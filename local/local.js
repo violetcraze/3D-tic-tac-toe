@@ -28,6 +28,8 @@ function setup() {
 
   gradientColor1 = color(73, 6, 99);
   gradientColor2 = color(10, 92, 165);
+
+  updateStatus();
 }
 
 function setupGameGraphics() {
@@ -85,5 +87,19 @@ function mouseReleased() {
     if (currentPlayer === 3) {
       currentPlayer = 1;
     }
+    updateStatus();
+  }
+}
+
+function updateStatus() {
+  const statusDiv = select('#local-status');
+  if (game.winner !== null) {
+    if (currentPlayer === 1) {
+      statusDiv.html(`Player 2 Won`);
+    } else {
+      statusDiv.html(`Player 1 Won`);
+    }
+  } else {
+    statusDiv.html(`Player ${currentPlayer}'s Turn`);
   }
 }

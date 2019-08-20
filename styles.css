@@ -18,7 +18,7 @@ html, body {
   border: none !important;
 }
 
-a, a:hover, a:visited, a:link {
+a, a:hover, a:visited, a:link, .status {
   color: rgba(251, 24, 202, 255);
   padding: 1rem;
   border-style: dotted;
@@ -35,4 +35,10 @@ a:hover {
 
 .coming-soon {
   text-decoration: line-through !important;
+}
+
+.status {
+  position: absolute;
+  right: 1rem;
+  bottom: 1rem;
 }
