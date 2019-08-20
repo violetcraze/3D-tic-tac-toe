@@ -1,6 +1,7 @@
 "use strict";
 
 let connected = false;
+let socket;
 
 let canvas;
 
@@ -24,6 +25,8 @@ function setup() {
   gradientColor2 = color(10, 92, 165);
 
   updateStatus();
+  
+  socket = io('http://localhost:3000');
 }
 
 function setupGame() {
