@@ -25,8 +25,27 @@ function setup() {
   gradientColor2 = color(10, 92, 165);
 
   updateStatus();
-  
+  setupSocket();
+}
+
+function setupSocket() {
   socket = io('http://localhost:3000');
+
+  socket.on('established', () => {
+    updateStatus('Waiting for another player ...<br>This is dependent on another person visiting the site.');
+  });
+
+  socket.on('room-ready', () => {
+    setupGame();
+    connected = true;
+  });
+
+  socket.on('connection-lost', () => {
+    clearStatus();
+    connected = false;
+    updateStatus('Connection Lost!');
+  });
+
 }
 
 function setupGame() {
@@ -101,10 +120,14 @@ function mouseReleased() {
   }
 }
 
-function updateStatus() {
+function updateStatus(str) {
   const statusDiv = select('#local-status');
   if (!connected) {
-    statusDiv.html(`Searching for another player ...<br>This is dependent on another person visiting the site.`);
+    let html = statusDiv.html();
+    if (str) {
+      html += '<br>' + str;
+    }
+    statusDiv.html(html);
     return;
   }
   if (game.winner !== null) {
@@ -116,4 +139,9 @@ function updateStatus() {
   } else {
     statusDiv.html(`Player ${currentPlayer}'s Turn`);
   }
+}
+
+function clearStatus() {
+  const statusDiv = select('#local-status');
+  statusDiv.html = '';
 }
