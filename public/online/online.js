@@ -9,7 +9,8 @@ let game;
 let gameGraphics;
 let cam;
 
-let currentPlayer;
+let player;
+let playersTurn = false;
 
 let gradientColor1;
 let gradientColor2;
@@ -35,23 +36,53 @@ function setupSocket() {
     updateStatus('Waiting for another player ...<br>This is dependent on another person visiting the site.');
   });
 
-  socket.on('room-ready', () => {
+  socket.on('room-ready', data => {
+    console.log(data.idInRoom);
+    player = data.idInRoom + 1;
+    if (player === 1) {
+      playersTurn = true;
+    } else {
+      playersTurn = false;
+    }
+    updateStatus();
+    statusConnecting(false);
     setupGame();
     connected = true;
   });
 
   socket.on('connection-lost', () => {
+    statusConnecting(true);
     clearStatus();
     connected = false;
     updateStatus('Connection Lost!');
+    game.clear();
   });
 
+  socket.on('player-move', (data) => {
+    if (player !== data.player) {
+      playersTurn = !playersTurn;
+      game.automatedMove(data.index, data.player);
+      updateStatus();
+    }
+    console.log(data);
+  });
+
+  emitMove = emitMove.bind(socket);
+
+}
+
+function emitMove(successful, index) {
+  if (successful) {
+    const data = {
+      player: player,
+      index: index,
+    }
+    this.emit('move', data);
+  }
 }
 
 function setupGame() {
   gameGraphics = createGraphics(width, height, WEBGL);
-
-  currentPlayer = int(random(2)) + 1;
 
   setupGameGraphics();
 
@@ -94,7 +125,7 @@ function draw() {
     gameGraphics.setCamera(cam);
   
     game.updateClosest(createVector(mouseX - width / 2, mouseY - height / 2), gameGraphics);
-    game.draw(currentPlayer, gameGraphics);
+    game.draw(player, gameGraphics);
     image(gameGraphics, 0, 0);
   }
 }
@@ -110,13 +141,12 @@ function drawGradientBackground(c1, c2) {
 }
 
 function mouseReleased() {
-  let successful = game.makeMove(currentPlayer);
-  if (successful) {
-    currentPlayer++;
-    if (currentPlayer === 3) {
-      currentPlayer = 1;
+  if (playersTurn) {
+    let successful = game.makeMove(player, emitMove);
+    if (successful) {
+      playersTurn = !playersTurn;
+      updateStatus();
     }
-    updateStatus();
   }
 }
 
@@ -131,17 +161,30 @@ function updateStatus(str) {
     return;
   }
   if (game.winner !== null) {
-    if (currentPlayer === 1) {
-      statusDiv.html(`Player 2 Won`);
+    if (playersTurn) {
+      statusDiv.html(`Your Opponent Won`);
     } else {
-      statusDiv.html(`Player 1 Won`);
+      statusDiv.html(`You Won!`);
     }
   } else {
-    statusDiv.html(`Player ${currentPlayer}'s Turn`);
+    if (playersTurn) {
+      statusDiv.html(`It's Your Turn`);
+    } else {
+      statusDiv.html(`It's Your Opponent's Turn`);
+    }
   }
 }
 
 function clearStatus() {
   const statusDiv = select('#local-status');
   statusDiv.html = '';
+}
+
+function statusConnecting(connecting) {
+  const statusDiv = select('#local-status');
+  if (connecting) {
+    statusDiv.addClass('connecting');
+  } else {
+    statusDiv.removeClass('connecting');
+  }
 }

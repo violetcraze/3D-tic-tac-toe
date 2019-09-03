@@ -18,6 +18,11 @@ io.on('connection', socket => {
   let room = joinRoom(socket);
   socket.emit('established');
 
+  socket.on('move', data => {
+    console.log(data);
+    io.to(room).emit('player-move', data);
+  });
+
   socket.on('disconnect', () => {
     // console.log(room + ' had a lost connection');
     // io.to(room).emit('connection-lost');
