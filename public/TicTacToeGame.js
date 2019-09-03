@@ -132,16 +132,34 @@ class TicTacToeGame {
     return x + (y * this.width) + (z * this.width * this.height);
   }
 
-  makeMove(currentPlayer) {
+  makeMove(currentPlayer, optionalCallback) {
     if (this.winner !== null) {
+      if (optionalCallback) {
+        optionalCallback(false);
+      }
       return false;
     }
     if (this.closest !== -1 && this.state[this.closest]=== 0) {
       this.state[this.closest] = currentPlayer;
       this.checkForWinner();
+      if (optionalCallback) {
+        optionalCallback(true, this.closest);
+      }
       return true;
     }
+    if (optionalCallback) {
+      optionalCallback(false);
+    }
     return false;
+  }
+
+  automatedMove(index, player) {
+    if (this.winner !== null) {
+      return false;
+    }
+    this.state[index] = player;
+    this.checkForWinner();
+    return true;
   }
 
   checkForWinner() {
