@@ -37,7 +37,7 @@ function setupSocket() {
   });
 
   socket.on('room-ready', data => {
-    console.log(data.idInRoom);
+    // console.log(data.idInRoom);
     player = data.idInRoom + 1;
     if (player === 1) {
       playersTurn = true;
@@ -48,6 +48,7 @@ function setupSocket() {
     statusConnecting(false);
     setupGame();
     connected = true;
+    updateStatus();
   });
 
   socket.on('connection-lost', () => {
@@ -64,7 +65,7 @@ function setupSocket() {
       game.automatedMove(data.index, data.player);
       updateStatus();
     }
-    console.log(data);
+    // console.log(data);
   });
 
   emitMove = emitMove.bind(socket);
