@@ -8,8 +8,8 @@ class TicTacToeGame {
     this.scale = int(scale);
 
     this.playerColors = [];
+    this.playerColors.push([color(251, 227, 62), color(245, 237, 187, 0)]);
     this.playerColors.push([color(181, 181, 251), color(1, 111, 253, 0)]);
-    this.playerColors.push([color(185, 241, 212), color(125, 219, 171, 0)]);
 
     this.boardColor = color(251, 24, 202);
 

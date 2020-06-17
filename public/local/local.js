@@ -26,8 +26,8 @@ function setup() {
 
   game = new TicTacToeGame(4, height / 15);
 
-  gradientColor1 = color(73, 6, 99);
-  gradientColor2 = color(10, 92, 165);
+  gradientColor1 = color(106, 0, 128);
+  gradientColor2 = color(0, 26, 77);
 
   updateStatus();
 }

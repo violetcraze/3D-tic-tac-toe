@@ -22,8 +22,8 @@ function preload() {
 function setup() {
   canvas = createCanvas(windowWidth, windowHeight);
 
-  gradientColor1 = color(73, 6, 99);
-  gradientColor2 = color(10, 92, 165);
+  gradientColor1 = color(106, 0, 128);
+  gradientColor2 = color(0, 26, 77);
 
   updateStatus();
   setupSocket();
@@ -33,11 +33,11 @@ function setupSocket() {
   socket = io('http://localhost:3000');
 
   socket.on('established', () => {
-    updateStatus('Waiting for another player ...<br>This is dependent on another person visiting the site.');
+    updateStatus('Waiting for another player ...<br>Invite a friend or you may be here awhile.');
   });
 
   socket.on('room-ready', data => {
-    console.log(data.idInRoom);
+    // console.log(data.idInRoom);
     player = data.idInRoom + 1;
     if (player === 1) {
       playersTurn = true;
@@ -48,6 +48,7 @@ function setupSocket() {
     statusConnecting(false);
     setupGame();
     connected = true;
+    updateStatus();
   });
 
   socket.on('connection-lost', () => {
@@ -64,7 +65,7 @@ function setupSocket() {
       game.automatedMove(data.index, data.player);
       updateStatus();
     }
-    console.log(data);
+    // console.log(data);
   });
 
   emitMove = emitMove.bind(socket);
