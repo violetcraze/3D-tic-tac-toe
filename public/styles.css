@@ -110,6 +110,10 @@ a:hover {
   height: 128px;
 }
 
+#logo-icon a:hover {
+  border: none;
+}
+
 #logo-icon #logo-title {
   max-width: 128px;
   max-height: 128px;
@@ -140,4 +144,8 @@ a:hover {
 #logo-game #logo-3d {
   max-width: 128px;
   max-height: 128px;
+}
+
+#logo-game a:hover {
+  border: none;
 }
