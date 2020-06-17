@@ -4,7 +4,8 @@
   "description": "3d tic tac toe inspired by the atari game",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js"
+    "start": "node index.js",
+    "dev": "nodemon index.js"
   },
   "author": "Fi Graham",
   "license": "GPL-3.0",
